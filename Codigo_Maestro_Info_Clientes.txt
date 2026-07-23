@@ -1,0 +1,29 @@
+proc sql;
+create table WORK.BASE_PERSONAL_CLIENTES_TEMP as
+select 
+    c.tomador,
+    c.nombre,
+    c.nomcli,
+    c.apellido1,
+    c.apellido2,
+    c.tipodo_alter,
+    c.telefono,
+    c.telefono2,
+    c.telefono3,
+    c.fechnaci,
+    c.sexo,
+    c.email,
+    c.domicili,
+    c.tipomo,
+    c.paisdom,
+    c.poblacion,
+    c.ecivil,
+    c.nif_alter,
+    c.prof,
+    c.situlaboral
+from AREACLI.clientes as c;
+quit;
+proc sort data=WORK.BASE_PERSONAL_CLIENTES_TEMP 
+          out=WORK.BASE_PERSONAL_CLIENTES nodupkey;
+    by tomador;
+run;
