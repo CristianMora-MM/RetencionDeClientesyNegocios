@@ -1,0 +1,17 @@
+proc sql;
+create table WORK.BASE_POLIZAS_CONTROL_TEMP as
+select 
+    t.tomador,
+    t.poliza,
+    t.aplica,
+    t.fefecto,
+    t.fanul,
+    t.ramo,
+    t.motanul,
+    cats(t.poliza, t.aplica) as KEY_UNICA
+from GENTH.THUNICA as t;
+quit;
+proc sort data=WORK.BASE_POLIZAS_CONTROL_TEMP 
+          out=WORK.BASE_POLIZAS_CONTROL nodupkey;
+    by KEY_UNICA;
+run;
