@@ -1,0 +1,11 @@
+proc sql;
+    create table WORK.PATRONES_CANCELACION as
+    select 
+        RAMO,
+        put(FANUL, yymon.) as Mes_Anulacion,
+        count(distinct POLIZA) as Total_Canceladas
+    from GENTH.THUNICA
+    where FANUL is not null
+    group by 1, 2
+    order by Total_Canceladas desc;
+quit;
