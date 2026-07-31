@@ -1,0 +1,29 @@
+proc sql;
+    create table WORK.ALERTA_DISMINUCION_2026 as
+    select 
+        c.TOMADOR,
+        c.NOMBRE,
+        c.NOMCLI,
+        c.EMAIL,
+        
+        
+        count(distinct t.POLIZA) as Polizas_Antes,
+        
+        
+        count(distinct case when t.FANUL is null then t.POLIZA end) as Polizas_Ahora,
+        
+                max(t.MOTANUL) as Ultimo_Motivo_Anulacion
+        
+    from AREACLI.CLIENTES c
+    inner join GENTH.THUNICA t 
+        on c.TOMADOR = t.TOMADOR
+    
+    
+    where t.FANUL is null or t.FANUL >= '01JAN2026'd
+    
+    group by c.TOMADOR, c.NOMBRE, c.NOMCLI, c.EMAIL
+    
+    
+    having count(distinct case when t.FANUL is null then t.POLIZA end) 
+         < count(distinct t.POLIZA);
+quit;

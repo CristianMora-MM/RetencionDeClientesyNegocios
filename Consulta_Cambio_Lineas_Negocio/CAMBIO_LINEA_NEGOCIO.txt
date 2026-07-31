@@ -1,0 +1,17 @@
+proc sql;
+    create table WORK.ALERTA_CAMBIO_LINEAS_2026 as
+    select distinct
+        c.TOMADOR,
+        c.NOMBRE,
+        c.NOMCLI,
+        c.EMAIL,
+        t.POLIZA,
+        t.RAMO,
+        t.FANUL as Fecha_Cambio_Anulacion,
+        t.MOTANUL
+    from AREACLI.CLIENTES c
+    inner join GENTH.THUNICA t 
+        on c.TOMADOR = t.TOMADOR
+    where t.FANUL >= '01JAN2026'd
+      and t.MOTANul is not null;
+quit;
