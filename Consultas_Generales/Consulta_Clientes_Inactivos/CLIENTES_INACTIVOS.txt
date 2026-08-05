@@ -3,7 +3,6 @@ proc sql;
     select 
         TOMADOR,
         NOMBRE,
-        NOMCLI,
         ESTADO_ECLIENTE,
         FBAJA_ECLIENTE
     from AREACLI.CLIENTES

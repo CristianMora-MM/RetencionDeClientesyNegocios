@@ -3,7 +3,6 @@ proc sql;
     select distinct 
         c.TOMADOR,
         c.NOMBRE,
-        c.NOMCLI,
         t.POLIZA,
         t.RAMO,
         t.FVTO_AC

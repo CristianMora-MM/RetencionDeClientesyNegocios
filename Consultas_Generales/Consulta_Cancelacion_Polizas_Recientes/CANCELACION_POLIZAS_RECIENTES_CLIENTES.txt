@@ -3,7 +3,6 @@ proc sql;
     select 
         c.TOMADOR,
         c.NOMBRE,
-        c.NOMCLI,
         t.POLIZA,
         t.RAMO,
         t.FANUL
