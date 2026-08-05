@@ -1,29 +1,56 @@
-proc sql;
-create table WORK.BASE_PERSONAL_CLIENTES_TEMP as
-select 
-    c.tomador,
-    c.nombre,
-    c.nomcli,
-    c.apellido1,
-    c.apellido2,
-    c.tipodo_alter,
-    c.telefono,
-    c.telefono2,
-    c.telefono3,
-    c.fechnaci,
-    c.sexo,
-    c.email,
-    c.domicili,
-    c.tipomo,
-    c.paisdom,
-    c.poblacion,
-    c.ecivil,
-    c.nif_alter,
-    c.prof,
-    c.situlaboral
-from AREACLI.clientes as c;
-quit;
-proc sort data=WORK.BASE_PERSONAL_CLIENTES_TEMP 
-          out=WORK.BASE_PERSONAL_CLIENTES nodupkey;
-    by tomador;
-run;
+/* Teléfono Principal */
+    case 
+        when not missing(c.telefono) 
+             and length(strip(c.telefono)) in (7, 10)
+             and strip(c.telefono) not in ('3000000001', '3000000000')
+             and not prxmatch('/^0+$/', strip(c.telefono)) 
+             and substr(strip(c.telefono), 1, 1) ne '0' 
+             then strip(c.telefono)
+
+        when not missing(c.telefono2) 
+             and length(strip(c.telefono2)) in (7, 10)
+             and strip(c.telefono2) not in ('3000000001', '3000000000')
+             and not prxmatch('/^0+$/', strip(c.telefono2))
+             and substr(strip(c.telefono2), 1, 1) ne '0'
+             then strip(c.telefono2)
+
+        when not missing(c.telefono3) 
+             and length(strip(c.telefono3)) in (7, 10)
+             and strip(c.telefono3) not in ('3000000001', '3000000000')
+             and not prxmatch('/^0+$/', strip(c.telefono3))
+             and substr(strip(c.telefono3), 1, 1) ne '0'
+             then strip(c.telefono3)
+
+        else 'SIN TELEFONO'
+    end as Telefono_principal,
+
+    /* Teléfono Secundario (Busca el siguiente número válido si el cliente tiene más de uno) */
+    case 
+        /* Si el principal salió del teléfono 1, miramos si el 2 o el 3 sirven */
+        when not missing(c.telefono) 
+             and length(strip(c.telefono)) in (7, 10)
+             and strip(c.telefono) not in ('3000000001', '3000000000')
+             and not prxmatch('/^0+$/', strip(c.telefono)) 
+             and substr(strip(c.telefono), 1, 1) ne '0' 
+             then (
+                case 
+                    when not missing(c.telefono2) and length(strip(c.telefono2)) in (7, 10) and strip(c.telefono2) not in ('3000000001', '3000000000') and not prxmatch('/^0+$/', strip(c.telefono2)) and substr(strip(c.telefono2), 1, 1) ne '0' then strip(c.telefono2)
+                    when not missing(c.telefono3) and length(strip(c.telefono3)) in (7, 10) and strip(c.telefono3) not in ('3000000001', '3000000000') and not prxmatch('/^0+$/', strip(c.telefono3)) and substr(strip(c.telefono3), 1, 1) ne '0' then strip(c.telefono3)
+                    else 'SIN SECUNDARIO'
+                end
+             )
+        /* Si el principal salió del teléfono 2, entonces el respaldo solo puede ser el teléfono 3 */
+        when not missing(c.telefono2) 
+             and length(strip(c.telefono2)) in (7, 10)
+             and strip(c.telefono2) not in ('3000000001', '3000000000')
+             and not prxmatch('/^0+$/', strip(c.telefono2))
+             and substr(strip(c.telefono2), 1, 1) ne '0' 
+             then (
+                case 
+                    when not missing(c.telefono3) and length(strip(c.telefono3)) in (7, 10) and strip(c.telefono3) not in ('3000000001', '3000000000') and not prxmatch('/^0+$/', strip(c.telefono3)) and substr(strip(c.telefono3), 1, 1) ne '0' then strip(c.telefono3)
+                    else 'SIN SECUNDARIO'
+                end
+             )
+        else 'SIN SECUNDARIO'
+    end as Telefono_secundario,
+
