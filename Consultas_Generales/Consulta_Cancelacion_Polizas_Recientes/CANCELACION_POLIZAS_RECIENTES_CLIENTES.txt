@@ -6,7 +6,7 @@ proc sql;
         t.POLIZA,
         t.RAMO,
         t.FANUL
-    from AREACLI.CLIENTES c -- O la librería donde esté la foto del día
+    from AREACLI.CLIENTES c
     inner join GENTH.THUNICA t 
         on c.TOMADOR = t.TOMADOR
     where t.FANUL >= '01ENE2026'd;

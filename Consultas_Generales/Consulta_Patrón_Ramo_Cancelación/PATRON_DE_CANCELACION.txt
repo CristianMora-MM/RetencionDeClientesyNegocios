@@ -6,6 +6,7 @@ proc sql;
         count(distinct POLIZA) as Total_Canceladas
     from GENTH.THUNICA
     where FANUL is not null
+	and year(FANUL)=2026
     group by 1, 2
     order by Total_Canceladas desc;
 quit;
