@@ -1,16 +1,20 @@
 proc sql;
-    create table WORK.ALERTA_CAMBIO_LINEAS_2026 as
-    select distinct
+    create table WORK.CAMBIO_LINEA_REAL as
+    select 
         c.TOMADOR,
         c.NOMBRE,
         c.EMAIL,
-        t.POLIZA,
-        t.RAMO,
-        t.FANUL as Fecha_Cambio_Anulacion,
-        t.MOTANUL
-    from AREACLI.CLIENTES c
-    inner join GENTH.THUNICA t 
-        on c.TOMADOR = t.TOMADOR
-    where t.FANUL >= '01JAN2026'd
-      and t.MOTANul is not null;
+        a.POLIZA,
+        a.RAMO as Ramo_Anterior,
+        b.RAMO as Ramo_Actual,
+        b.FANUL as Fecha_Cambio,
+        b.MOTANUL
+    from GENTH.THUNICA a
+    inner join GENTH.THUNICA b
+        on a.POLIZA = b.POLIZA
+    inner join AREACLI.CLIENTES c
+        on a.TOMADOR = c.TOMADOR
+    where a.RAMO ne b.RAMO
+      and a.FANUL < b.FANUL
+      and b.FANUL >= '01JAN2026'd;
 quit;

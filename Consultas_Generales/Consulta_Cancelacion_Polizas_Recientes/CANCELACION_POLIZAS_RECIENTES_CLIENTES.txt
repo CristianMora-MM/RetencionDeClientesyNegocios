@@ -1,13 +1,15 @@
 proc sql;
-    create table WORK.CANCELADOS_RECENTES as
+    create table WORK.CANCELADOS_RECIENTES as
     select 
         c.TOMADOR,
         c.NOMBRE,
         t.POLIZA,
         t.RAMO,
+		t.motanul,
         t.FANUL
     from AREACLI.CLIENTES c
     inner join GENTH.THUNICA t 
         on c.TOMADOR = t.TOMADOR
-    where t.FANUL >= '01ENE2026'd;
-quit;
+    where t.FANUL >= '01JAN2026'd
+	and t.motanul = 'J';
+quit; 

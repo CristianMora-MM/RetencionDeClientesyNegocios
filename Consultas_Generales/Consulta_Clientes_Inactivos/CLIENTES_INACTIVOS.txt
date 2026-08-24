@@ -1,11 +1,15 @@
-proc sql;
+PROC SQL;
     create table WORK.CLIENTES_INACTIVOS as
-    select 
-        TOMADOR,
-        NOMBRE,
-        ESTADO_ECLIENTE,
-        FBAJA_ECLIENTE
-    from AREACLI.CLIENTES
-    where ESTADO_ECLIENTE in ('I', 'INACTIVO') 
-       or FBAJA_ECLIENTE is not null;
-quit;
+    select distinct
+        c.TOMADOR,
+        c.NOMBRE,
+        t.POLIZA,
+        t.FANUL,
+        t.MOTANUL
+    from AREACLI.CLIENTES c
+    inner join GENTH.THUNICA t
+      on c.TOMADOR = t.TOMADOR
+    where t.FANUL >= '01JAN2026'd 
+      and t.FANUL > '01JUN2026'd 
+      and t.MOTANUL not in ('Y', 'Z'); 
+QUIT;

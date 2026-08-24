@@ -1,14 +1,14 @@
-proc sql;
+PROC SQL;
     create table WORK.NO_RENOVADOS as
-    select distinct 
+    select distinct
         c.TOMADOR,
         c.NOMBRE,
         t.POLIZA,
         t.RAMO,
-        t.FVTO_AC
+        t.FANUL
     from AREACLI.CLIENTES c
-    inner join GENTH.THUNICA t 
-        on c.TOMADOR = t.TOMADOR
-    where t.FVTO_AC < '01JUN2026'd
+    inner join GENTH.THUNICA t
+      on c.TOMADOR = t.TOMADOR
+    where t.FANUL < '01JUN2026'd
       and t.POLIZAS_REN = 0;
-quit;
+QUIT;
