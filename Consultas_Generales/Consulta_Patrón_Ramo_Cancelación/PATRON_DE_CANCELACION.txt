@@ -5,8 +5,8 @@ proc sql;
         put(FANUL, yymon.) as Mes_Anulacion,
         count(distinct POLIZA) as Total_Canceladas
     from GENTH.THUNICA
-    where FANUL is not null
-	and year(FANUL)=2026
+     where FANUL >= '01JAN2026'd 
+      and FANUL <= '30SEP2026'd 
     group by 1, 2
-    order by Total_Canceladas desc;
+    order by Total_Canceladas desc;     
 quit;

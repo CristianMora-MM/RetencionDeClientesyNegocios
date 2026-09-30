@@ -5,10 +5,13 @@ PROC SQL;
         c.NOMBRE,
         t.POLIZA,
         t.RAMO,
-        t.FANUL
-    from AREACLI.CLIENTES c
+        t.FANUL,
+        t.MOTANUL
+    from AREACLI.CLIENTES c        
     inner join GENTH.THUNICA t
-      on c.TOMADOR = t.TOMADOR
-    where t.FANUL < '01JUN2026'd
-      and t.POLIZAS_REN = 0;
+        on c.TOMADOR = t.TOMADOR
+    where t.FANUL >= '01JAN2026'd 
+      and t.FANUL <= '30SEP2026'd 
+      and (t.MOTANUL in ('J', 'N', 'O', 'P') 
+           or t.POLIZAS_REN = 0);
 QUIT;
