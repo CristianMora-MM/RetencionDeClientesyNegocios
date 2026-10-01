@@ -1,48 +1,14 @@
-
-
-
 PROC SQL;
-    create table WORK.TOMADORES_ACTIVOS as
-    select distinct TOMADOR
-    from GENTH.THUNICA
-    where FANUL is null or FANUL > TODAY();
-QUIT;
-PROC SQL;
-    create table WORK.REPORTE_INACTIVOS_UNICO as
-    SELECT 
-        c.TOMADOR,
-        c.NOMBRE,
-        c.EMAIL,
-        t.POLIZA,
-        MAX(t.RAMO) as RAMO,
-        MAX(t.FANUL) as Fecha_Anulacion format=DATE9.,
-        MAX(t.MOTANUL) as MOTANUL
-    FROM AREACLI.CLIENTES c
-    INNER JOIN GENTH.THUNICA t
-        ON c.TOMADOR = t.TOMADOR
-    LEFT JOIN WORK.TOMADORES_ACTIVOS act
-        ON c.TOMADOR = act.TOMADOR
-    WHERE t.FANUL >= '01JAN2026'd          
-      AND t.FANUL <= TODAY()              
-      AND act.TOMADOR IS NULL             
-    GROUP BY c.TOMADOR, c.NOMBRE, c.EMAIL, t.POLIZA
-    ORDER BY Fecha_Anulacion DESC;
-QUIT;
-
-
-
-PROC SQL;
-    create table WORK.CLIENTES_INACTIVOS as
-    select distinct
-        c.TOMADOR,
-        c.NOMBRE,
-        t.POLIZA,
-        t.FANUL,
-        t.MOTANUL
-    from AREACLI.CLIENTES c       
-    inner join GENTH.THUNICA t
-        on c.TOMADOR = t.TOMADOR
-    where t.FANUL >= '01JAN2026'd 
-      and t.FANUL <= '30SEP2026'd
-      and (t.MOTANUL not in ('Y', 'Z') or t.MOTANUL is null); 
+   create table WORK.CLIENTES_INACTIVOS as
+   select distinct
+          c.TOMADOR,
+          c.NOMBRE,
+          t.POLIZA,
+          t.FANUL,
+          t.MOTANUL
+   from AREACLI.CLIENTES c
+   inner join GENTH.THUNICA_202608 t
+      on c.TOMADOR = t.TOMADOR
+   where t.FANUL > '31AUG2026'd
+     and (t.MOTANUL not in ('Y', 'Z') or t.MOTANUL is null);
 QUIT;
