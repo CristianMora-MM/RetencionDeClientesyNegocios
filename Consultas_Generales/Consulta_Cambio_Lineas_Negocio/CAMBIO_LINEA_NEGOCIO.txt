@@ -1,20 +1,47 @@
+
+/* 1. Sacar los ramos únicos históricos que ha tenido cada cliente */
 proc sql;
-    create table WORK.CAMBIO_LINEA_REAL as
-    select 
-        c.TOMADOR,
-        c.NOMBRE,
-        c.EMAIL,
-        a.POLIZA,
-        a.RAMO as Ramo_Anterior,
-        b.RAMO as Ramo_Actual,
-        b.FANUL as Fecha_Cambio,
-        b.MOTANUL
-    from GENTH.THUNICA a
-    inner join GENTH.THUNICA b
-        on a.POLIZA = b.POLIZA
-    inner join AREACLI.CLIENTES c
-        on a.TOMADOR = c.TOMADOR
-    where a.RAMO ne b.RAMO
-      and a.FANUL < b.FANUL
-      and b.FANUL >= '01JAN2026'd;
+   create table work.ramos_historicos as
+   select distinct 
+          TOMADOR, 
+          RAMO as Ramo_Anterior,
+          max(POLIZA) as Poliza_Anterior
+   from GENTH.THUNICA_202608
+   where FANUL < '01JAN2026'd or FANUL is null
+   group by TOMADOR, RAMO;
+quit;
+
+/* 2. Sacar los ramos únicos que tiene el cliente en 2026 */
+proc sql;
+   create table work.ramos_2026 as
+   select distinct 
+          TOMADOR, 
+          RAMO as Ramo_Actual,
+          max(POLIZA) as Poliza_Actual,
+          max(FANUL) as Fecha_Cambio,
+          max(MOTANUL) as MOTANUL
+   from GENTH.THUNICA_202608
+   where FANUL >= '01JAN2026'd
+   group by TOMADOR, RAMO;
+quit;
+
+/* 3. Cruzar solo 1 ramo anterior vs 1 ramo actual por cliente */
+proc sql;
+   create table WORK.CAMBIO_LINEA_DEFINITIVO as
+   select distinct
+          c.TOMADOR,
+          c.NOMBRE,
+          c.EMAIL,
+          a.Poliza_Anterior,
+          a.Ramo_Anterior,
+          b.Poliza_Actual,
+          b.Ramo_Actual,
+          b.Fecha_Cambio,
+          b.MOTANUL
+   from work.ramos_historicos a
+   inner join work.ramos_2026 b
+      on a.TOMADOR = b.TOMADOR
+   inner join AREACLI.CLIENTES c
+      on a.TOMADOR = c.TOMADOR
+   where a.Ramo_Anterior ne b.Ramo_Actual;
 quit;
